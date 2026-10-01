@@ -1,7 +1,9 @@
 # PharmaSoft — práctica LP II, sesión 7
 
-**Autor:** Miguel Ángel Tinoco López  
-**Proyecto:** `pharma-frontend`  
+**Autor:** Miguel Ángel Tinoco López
+
+**Proyecto:** `pharma-frontend`
+
 **Rama:** `feature/spa-categorias-tinoco`
 
 SPA Angular para administrar categorías usando el backend Spring Boot del proyecto Practica.
@@ -101,4 +103,3 @@ git push -u origin main
 git push -u origin develop
 git push -u origin feature/spa-categorias-tinoco
 ```
-
