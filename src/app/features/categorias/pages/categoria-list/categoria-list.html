@@ -1,0 +1,7 @@
+<div class="page-head"><div><p class="eyebrow">CATÁLOGO</p><h1>Categorías</h1><p class="subtitulo">Organiza las categorías de tus productos.</p></div><a class="btn primario" routerLink="nuevo">＋ Nueva categoría</a></div>
+@if(exito()){<div class="alerta exito" role="status">{{exito()}}</div>}
+@if(error()){<div class="alerta" role="alert">{{error()}} <button class="btn pequeno" (click)="cargar()">Reintentar</button></div>}
+<section class="card"><div class="toolbar"><input type="search" aria-label="Buscar categoría" placeholder="Buscar por nombre…" [value]="filtro()" (input)="filtro.set($any($event.target).value)"/><span class="muted">{{filtradas().length}} categorías</span></div>
+@if(cargando()){<p class="estado-vacio" role="status">Cargando categorías…</p>}@else if(!error()){
+@if(filtradas().length===0){<p class="estado-vacio">{{categorias().length===0?'Todavía no hay categorías registradas.':'No se encontraron coincidencias.'}}</p>}@else{
+<div class="tabla-scroll"><table><thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Estado</th><th>Creación</th><th>Acciones</th></tr></thead><tbody>@for(c of filtradas();track c.id){<tr><td><small>#{{c.id}}</small></td><td><strong>{{c.nombre}}</strong></td><td>{{c.descripcion||'—'}}</td><td><span class="estado" [class.activo]="c.estado">{{c.estado?'Activo':'Inactivo'}}</span></td><td>{{c.fechaCreacion|date:'dd/MM/yyyy'}}</td><td><a class="btn pequeno" [routerLink]="[c.id,'editar']">Editar</a></td></tr>}</tbody></table></div>}}</section>
