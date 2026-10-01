@@ -3,8 +3,12 @@ import {Component,OnInit,computed,inject,signal} from '@angular/core';import {Da
 export class CategoriaList implements OnInit {
 private readonly service=inject(CategoriaService);private readonly router=inject(Router);
 protected readonly categorias=signal<Categoria[]>([]);protected readonly filtro=signal('');protected readonly cargando=signal(false);protected readonly error=signal('');protected readonly exito=signal('');
+protected readonly pendiente=signal<Categoria|null>(null);protected readonly eliminando=signal(false);
 protected readonly filtradas=computed(()=>{const t=this.filtro().trim().toLocaleLowerCase();return this.categorias().filter(c=>c.nombre.toLocaleLowerCase().includes(t));});
 constructor(){this.exito.set(this.router.currentNavigation()?.extras.state?.['mensaje']??'');}
 ngOnInit(){this.cargar();}
+solicitarEliminar(c:Categoria){this.pendiente.set(c);}
+cancelarEliminar(){if(!this.eliminando())this.pendiente.set(null);}
+confirmarEliminar(){const c=this.pendiente();if(!c||this.eliminando())return;this.eliminando.set(true);this.error.set('');this.exito.set('');this.service.eliminar(c.id).pipe(finalize(()=>this.eliminando.set(false))).subscribe({next:()=>{this.categorias.update(lista=>lista.filter(item=>item.id!==c.id));this.pendiente.set(null);this.exito.set('Categoría eliminada correctamente.');},error:(err:HttpErrorResponse)=>{this.pendiente.set(null);this.error.set(mensajeError(err));}});}
 cargar(){this.cargando.set(true);this.error.set('');this.service.listar().pipe(finalize(()=>this.cargando.set(false))).subscribe({next:datos=>this.categorias.set(datos),error:(err:HttpErrorResponse)=>this.error.set(mensajeError(err))});}
 }
