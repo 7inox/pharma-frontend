@@ -1,0 +1,12 @@
+<div class="page-head"><div><p class="eyebrow">PHARMASOFT · CLIENTES</p><h1>{{ id() ? 'Editar cliente' : 'Registrar cliente' }}</h1></div><a class="btn" routerLink="/clientes">Volver al listado</a></div>
+@if (error()) { <div class="alerta" role="alert">{{ error() }}</div> }
+@if (cargando()) { <p role="status">Cargando datos del cliente…</p> }
+<form class="card form-card" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+  <fieldset style="border:0;padding:0;margin:0" [disabled]="cargando() || guardando() || !disponible()">
+    @for (campo of campos; track campo.nombre) {
+      <div class="campo"><label [for]="campo.nombre">{{ campo.etiqueta }}</label><input type="text" [id]="campo.nombre" [formControlName]="campo.nombre" [attr.maxlength]="campo.maximo" [attr.inputmode]="campo.nombre === 'dni' || campo.nombre === 'telefono' ? 'numeric' : campo.nombre === 'email' ? 'email' : 'text'" [attr.aria-describedby]="campo.nombre + '-ayuda ' + campo.nombre + '-error'" [attr.aria-invalid]="!!mensajeCampo(campo.nombre)"><small class="ayuda" [id]="campo.nombre + '-ayuda'">{{ campo.ayuda }}</small><span class="field-error" [id]="campo.nombre + '-error'">{{ mensajeCampo(campo.nombre) }}</span></div>
+    }
+    <label class="checkbox"><input type="checkbox" formControlName="estado">Cliente activo</label>
+    <div class="acciones"><button class="btn primario" type="submit">{{ guardando() ? 'Guardando…' : 'Guardar cliente' }}</button><a class="btn" routerLink="/clientes">Cancelar</a></div>
+  </fieldset>
+</form>
