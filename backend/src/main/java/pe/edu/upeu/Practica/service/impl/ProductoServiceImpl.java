@@ -100,13 +100,29 @@ public class ProductoServiceImpl implements ProductoService {
                 new RecursosNoEncontradoException(
                         "Producto no encontrado con id: " + aLong)
         );
-        productoRepository.delete(producto);
+        if (!Boolean.TRUE.equals(producto.getEstado())) {
+            throw new ReglaNegocioException("El producto ya está inactivo.");
+        }
+        producto.setEstado(false);
+        productoRepository.save(producto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Iterable<ProductoResponseDTO> readAll() {
         return productoRepository.findAll().stream().map(this::convertirResponse).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public pe.edu.upeu.Practica.dto.PaginaResponseDTO<ProductoResponseDTO> listar(int pagina, int tamanio, String ordenarPor, String direccion) {
+        if (pagina < 0 || tamanio < 1 || tamanio > 100) throw new ReglaNegocioException("Parámetros de paginación inválidos.");
+        if (!java.util.Set.of("id", "nombre", "precio", "stock").contains(ordenarPor)) throw new ReglaNegocioException("Campo de orden no permitido.");
+        if (!java.util.Set.of("asc", "desc").contains(direccion)) throw new ReglaNegocioException("Dirección de orden no permitida.");
+        var sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.fromString(direccion), ordenarPor);
+        if (!ordenarPor.equals("id")) sort = sort.and(org.springframework.data.domain.Sort.by("id"));
+        var resultado = productoRepository.findAll(org.springframework.data.domain.PageRequest.of(pagina, tamanio, sort));
+        return new pe.edu.upeu.Practica.dto.PaginaResponseDTO<>(resultado.getContent().stream().map(this::convertirResponse).toList(), resultado.getNumber(), resultado.getSize(), resultado.getTotalElements(), resultado.getTotalPages(), resultado.isLast());
     }
 
     private ProductoResponseDTO convertirResponse(Producto producto) {

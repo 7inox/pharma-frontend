@@ -17,8 +17,10 @@ import pe.edu.upeu.Practica.service.service.CategoriaService;
 public class CategoriaServiceImpl implements CategoriaService {
     private static final Logger LOG = LoggerFactory.getLogger(CategoriaServiceImpl.class);
     private final CategoriaRepository categoriaRepository;
+    private final pe.edu.upeu.Practica.repository.ProductoRepository productoRepository;
 
-    public CategoriaServiceImpl(CategoriaRepository categoriaRepository) {
+    public CategoriaServiceImpl(CategoriaRepository categoriaRepository, pe.edu.upeu.Practica.repository.ProductoRepository productoRepository) {
+        this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
     }
 
@@ -72,7 +74,10 @@ public class CategoriaServiceImpl implements CategoriaService {
                 new RecursosNoEncontradoException(
                         "Categoria no encontrada con id: " + aLong)
         );
-    categoriaRepository.delete(categoria);
+        if (productoRepository.existsByCategoriaId(aLong)) {
+            throw new ReglaNegocioException("No se puede eliminar una categoría que tiene productos asociados.");
+        }
+        categoriaRepository.delete(categoria);
     }
 
     @Override

@@ -14,11 +14,11 @@ import lombok.NoArgsConstructor;
 @Data
 public class ProductoRequestDTO {
     @NotBlank(message = "El nombre no puede estar vacío")
-    @Size(min = 3, max = 50, message = "El nombre no puede tener más de 50 caracteres")
+    @Size(min = 3, max = 150, message = "El nombre debe tener entre 3 y 150 caracteres")
     private String nombre;
 
     @NotNull(message = "El precio es obligatorio")
-    @Positive(message = "El precio debe ser mayor a 0")
+    @jakarta.validation.constraints.DecimalMin(value = "0.01", message = "El precio mínimo es 0.01")
     private Double precio;
 
     @NotNull(message = "El stock es obligatorio")
@@ -29,5 +29,6 @@ public class ProductoRequestDTO {
     private Boolean estado;
 
     @NotNull(message = "La categoría es obligatoria")
+    @Positive(message = "La categoría debe tener un identificador positivo")
     private Long categoriaId;
 }
