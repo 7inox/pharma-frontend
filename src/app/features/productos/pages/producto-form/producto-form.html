@@ -1,0 +1,14 @@
+<div class="page-head"><div><p class="eyebrow">PHARMASOFT · CATÁLOGO</p><h1>{{ id() ? 'Editar producto' : 'Nuevo producto' }}</h1><p class="subtitulo">Selecciona una categoría activa para guardar el producto.</p></div><a routerLink="/productos" class="btn">Volver al listado</a></div>
+@if (error()) { <div class="alerta" role="alert">{{ error() }}</div> }
+@if (cargando()) { <section class="card" role="status">Cargando producto y categorías…</section> }
+@else if (disponible()) {
+  @if (!hayCategoriasActivas()) { <div class="alerta" role="alert">No hay categorías activas. <a routerLink="/categorias/nuevo">Crear una categoría</a> antes de guardar.</div> }
+  @if (categoriaInactiva()) { <div class="alerta" role="alert">La categoría original está inactiva. Elige una categoría activa para guardar.</div> }
+  <form class="card form-card" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+    <div class="campo"><label for="nombre">Nombre</label><input id="nombre" type="text" formControlName="nombre" maxlength="150"><small class="ayuda">Entre 3 y 150 caracteres. El nombre debe ser único.</small>@if (mensajeCampo('nombre')) { <span class="field-error">{{ mensajeCampo('nombre') }}</span> }</div>
+    <div class="columnas"><div class="campo"><label for="precio">Precio (S/)</label><input id="precio" type="number" formControlName="precio" min="0.01" step="0.01">@if (mensajeCampo('precio')) { <span class="field-error">{{ mensajeCampo('precio') }}</span> }</div><div class="campo"><label for="stock">Stock</label><input id="stock" type="number" formControlName="stock" min="0" step="1">@if (mensajeCampo('stock')) { <span class="field-error">{{ mensajeCampo('stock') }}</span> }</div></div>
+    <div class="campo"><label for="categoriaId">Categoría</label><select id="categoriaId" formControlName="categoriaId"><option [ngValue]="null" disabled>Selecciona una categoría</option>@for (c of opciones(); track c.id) { <option [ngValue]="c.id">{{ c.nombre }}{{ c.estado ? '' : ' (inactiva)' }}</option> }</select>@if (mensajeCampo('categoriaId')) { <span class="field-error">{{ mensajeCampo('categoriaId') }}</span> }</div>
+    <label class="checkbox"><input type="checkbox" formControlName="estado"> Producto activo</label>
+    <div class="acciones"><button class="btn primario" type="submit" [disabled]="guardando() || !hayCategoriasActivas() || categoriaInactiva()">{{ guardando() ? 'Guardando…' : 'Guardar producto' }}</button><a routerLink="/productos" class="btn">Cancelar</a></div>
+  </form>
+}
