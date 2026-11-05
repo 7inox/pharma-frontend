@@ -1,11 +1,10 @@
 import { Routes } from '@angular/router';
-import { MainLayout } from './layout/main-layout/main-layout';
 import { authGuard, guestGuard, permissionGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
   { path: 'login', canActivate: [guestGuard], loadComponent: () => import('./features/login/login').then(m => m.Login) },
   {
-    path: '', component: MainLayout, canActivate: [authGuard], canActivateChild: [authGuard],
+    path: '', loadComponent: () => import('./layout/main-layout/main-layout').then(m => m.MainLayout), canActivate: [authGuard], canActivateChild: [authGuard],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'inicio' },
       { path: 'inicio', loadComponent: () => import('./features/inicio/inicio').then(m => m.Inicio) },
