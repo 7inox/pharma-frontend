@@ -3,7 +3,9 @@
   <a routerLink="/inicio" class="marca">Pharma<span>Soft</span></a>
   <nav aria-label="Menú superior">
     <a routerLink="/inicio">Inicio</a>
-    <a href="http://localhost:8081/swagger-ui.html" target="_blank" rel="noopener">API · Swagger ↗</a>
+    @if (!production) {
+      <a href="http://localhost:8081/swagger-ui.html" target="_blank" rel="noopener">API · Swagger ↗</a>
+    }
   </nav>
   @if (auth.session(); as session) {
     <div class="usuario"><span class="nombre">{{ session.nombreCompleto }}</span>
