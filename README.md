@@ -103,3 +103,13 @@ git push -u origin main
 git push -u origin develop
 git push -u origin feature/spa-categorias-tinoco
 ```
+
+## Sesión 13 · ejecutar en producción local
+
+1. Instalar dependencias con `npm ci` y compilar con `npm run build`.
+2. Iniciar Nginx y Redis con `docker compose -f deploy/docker-compose.yml up -d`.
+3. Iniciar [PharmaBackend](https://github.com/7inox/PharmaBackend) con el perfil `prod` en el puerto 8080.
+4. Abrir `http://localhost:8081`. Nginx sirve la SPA y redirige `/api/` al backend.
+
+Para desarrollo, usar `npm start` con el backend en el puerto 8081. La compilación de producción
+usa `/api/v1` en el mismo origen, un presupuesto inicial de 360 kB para avisos y nombres con hash.
