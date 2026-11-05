@@ -1,0 +1,14 @@
+section { padding: 24px; color: #172b4d; }
+form { display: flex; flex-wrap: wrap; gap: 16px; align-items: end; margin: 24px 0; }
+label { display: grid; gap: 6px; }
+input, button { padding: 10px 14px; border: 1px solid #b5c3d3; border-radius: 6px; font: inherit; }
+button { background: #1557b0; color: white; cursor: pointer; }
+button:disabled { opacity: .6; cursor: wait; }
+.error { padding: 12px; background: #fff0f0; color: #9c2222; }
+.tabla { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+caption { text-align: left; margin-bottom: 12px; }
+th, td { padding: 14px; border-bottom: 1px solid #dce3eb; text-align: left; }
+thead, tfoot { background: #edf3fb; }
+.pista { min-width: 140px; background: #e6edf6; border-radius: 5px; overflow: hidden; }
+.barra { background: #2875d5; height: 16px; }
