@@ -9,7 +9,7 @@
   </nav>
   @if (auth.session(); as session) {
     <div class="usuario"><span class="nombre">{{ session.nombreCompleto }}</span>
-      <span class="detalle">{{ session.roles.join(' · ') }} · expira {{ session.expiraEn | date:'HH:mm' }}</span>
+      <span class="detalle">{{ session.roles.join(' · ') }} · expira {{ expirationTime() }}</span>
     </div>
     <button type="button" class="salir" (click)="auth.logout()">Cerrar sesión</button>
   }
