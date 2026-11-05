@@ -1,0 +1,23 @@
+<section>
+  <h1>Reporte de ventas por categoría</h1>
+  <p>Compara las unidades y el monto vendido. Deja las fechas vacías para consultar el histórico.</p>
+  <form (ngSubmit)="generar()">
+    <label>Desde <input type="date" name="desde" [(ngModel)]="desde" [disabled]="cargando()"></label>
+    <label>Hasta <input type="date" name="hasta" [(ngModel)]="hasta" [disabled]="cargando()"></label>
+    <button type="submit" [disabled]="cargando()">{{ cargando() ? 'Generando…' : 'Generar' }}</button>
+  </form>
+  @if (error()) { <p role="alert" class="error">{{ error() }}</p> }
+  @if (cargando()) { <p role="status">Cargando reporte…</p> }
+  @if (consultado() && !filas().length) { <p role="status">No hay ventas en el periodo seleccionado</p> }
+  @if (filas().length) {
+    <div class="tabla"><table>
+      <caption>Ventas registradas por categoría</caption>
+      <thead><tr><th scope="col">Categoría</th><th scope="col">Unidades vendidas</th><th scope="col">Monto</th><th scope="col">Comparación</th></tr></thead>
+      <tbody>@for (fila of filas(); track fila.categoriaId) {
+        <tr><th scope="row">{{ fila.categoriaNombre }}</th><td>{{ fila.cantidadVendida }}</td><td>{{ fila.montoTotal | currency:'PEN':'S/ ':'1.2-2' }}</td>
+          <td><div class="pista" aria-hidden="true"><div class="barra" [style.width.%]="porcentaje(fila)"></div></div></td></tr>
+      }</tbody>
+      <tfoot><tr><th scope="row">Total</th><td>{{ unidades() }}</td><td>{{ monto() | currency:'PEN':'S/ ':'1.2-2' }}</td><td></td></tr></tfoot>
+    </table></div>
+  }
+</section>

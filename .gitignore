@@ -42,3 +42,9 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Archivos de ejecución local S9
+/pharma-s9/
+/backend/classpath.txt
+/backend/compile-debug.log
+/backend/run.log

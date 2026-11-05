@@ -1,0 +1,26 @@
+<section class="pantalla">
+<h1>Ventas</h1>
+@if (error()) { <p role="alert" class="error">{{error()}}</p> }
+@if (guardada(); as venta) { <p role="status">Venta #{{venta.id}} registrada: {{venta.total | currency:'PEN':'S/ '}}</p><button (click)="imprimir(venta)">Imprimir comprobante</button> }
+<div class="registro" [class.bloqueado]="resumen()">
+<h2>Nueva venta</h2>
+<label>Buscar cliente <input [ngModel]="buscarClienteSignal()" (ngModelChange)="buscarClienteSignal.set($event)" [disabled]="resumen()"></label>
+@if (cliente(); as c) { <p>Cliente: {{c.nombres}} {{c.apellidos}} · DNI {{c.dni}}</p> }
+@if (validando() && !cliente()) { <p class="error">Seleccione un cliente activo</p> }
+<div class="resultados">@for(c of filtrosCliente(); track c.id) { <button (click)="cliente.set(c)" [disabled]="resumen()">{{c.dni}} · {{c.nombres}} {{c.apellidos}}</button> } @empty { <p>Ningún cliente activo coincide...</p> }</div>
+<label>Buscar producto o categoría <input [ngModel]="buscarProductoSignal()" (ngModelChange)="buscarProductoSignal.set($event)" (keydown.enter)="enter($event)" [disabled]="resumen()"></label>
+<div class="resultados">@for(p of filtrosProducto(); track p.id) { <button (click)="agregar(p)" [disabled]="resumen()">{{p.nombre}} · {{p.categoriaNombre}} · {{p.precio | currency:'PEN':'S/ '}} · Stock: {{p.stock}} @if(cantidad(p)) { · En la venta: {{cantidad(p)}} }</button> } @empty { <p>Ningún producto activo coincide</p> }</div>
+<table><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Subtotal</th><th>Acción</th></tr></thead><tbody>
+@for(l of lineas(); track l.producto.id) { <tr><td>{{l.producto.nombre}}</td><td><input type="number" min="1" step="1" [attr.aria-label]="'Cantidad de ' + l.producto.nombre" [ngModel]="l.cantidad" (ngModelChange)="cambiar(l.producto.id,$event)" [disabled]="resumen()">@if(problema(l)) { <p class="error">{{problema(l)}}</p> }</td><td>{{l.producto.precio | currency:'PEN':'S/ '}}</td><td>{{subtotal(l) | currency:'PEN':'S/ '}}</td><td><button (click)="quitar(l.producto.id)" [disabled]="resumen()">Quitar</button></td></tr> }
+</tbody></table>
+@if (validando() && !lineas().length) { <p class="error">Agregue al menos un producto</p> }
+<p>Total estimado: <strong>{{total() | currency:'PEN':'S/ '}}</strong></p><button (click)="revisar()" [disabled]="resumen()">Revisar venta</button>
+</div>
+@if(resumen()) { <div role="dialog" aria-modal="true" aria-label="Confirmar venta" class="resumen"><h2>Confirmar venta</h2><p>{{cliente()?.nombres}} {{cliente()?.apellidos}}</p>@for(l of lineas();track l.producto.id) { <p>{{l.producto.nombre}} × {{l.cantidad}} = {{subtotal(l) | currency:'PEN':'S/ '}}</p> }<p>Total estimado: {{total() | currency:'PEN':'S/ '}}</p><button (click)="resumen.set(false)" [disabled]="enviando()">Volver</button><button (click)="confirmar()" [disabled]="enviando()">{{enviando() ? 'Registrando…' : 'Confirmar venta'}}</button></div> }
+<h2>Consulta de ventas</h2><label>Desde <input type="date" [(ngModel)]="desde"></label><label>Hasta <input type="date" [(ngModel)]="hasta"></label><label>Estado <select [(ngModel)]="estado"><option value="">Todos</option><option>REGISTRADA</option><option>ANULADA</option></select></label><button (click)="consultar()">Consultar</button><button (click)="imprimir(null)">Imprimir consulta</button>
+<table><thead><tr><th>Número</th><th>Fecha</th><th>Cliente</th><th>Estado</th><th>Ítems</th><th>Total</th><th>Acción</th></tr></thead><tbody>@for(v of ventas();track v.id) { <tr><td>{{v.id}}</td><td>{{v.fecha | date:'dd/MM/yyyy HH:mm'}}</td><td>{{v.clienteNombre}}</td><td>{{v.estado}}</td><td>{{v.detalles.length}}</td><td>{{v.total | currency:'PEN':'S/ '}}</td><td><button (click)="imprimir(v)" [attr.aria-label]="'Imprimir venta ' + v.id">🖨</button></td></tr> } @empty { <tr><td colspan="7">No hay ventas para los filtros seleccionados</td></tr> }</tbody></table>
+</section>
+<section class="solo-impresion">
+@if(impresion();as v) { <h1>PharmaSoft · Comprobante #{{v.id}}</h1><p>{{v.fecha | date:'dd/MM/yyyy HH:mm'}} · {{v.clienteNombre}} · DNI: {{dni(v)}}</p>@if(v.estado==='ANULADA') { <h2>ANULADA</h2> }<table><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Subtotal</th></tr></thead><tbody>@for(d of v.detalles;track $index) { <tr><td>{{d.productoNombre}}</td><td>{{d.cantidad}}</td><td>{{d.precio | currency:'PEN':'S/ '}}</td><td>{{d.subtotal | currency:'PEN':'S/ '}}</td></tr> }</tbody></table><p>Total: {{v.total | currency:'PEN':'S/ '}}</p><footer>PharmaSoft · Gracias por su compra · Documento académico</footer> }
+@if(imprimirConsulta()) { <h1>Consulta de ventas</h1><p>Desde: {{desde || 'Inicio'}} · Hasta: {{hasta || 'Hoy'}} · Estado: {{estado || 'Todos'}}</p>@for(v of ventas();track v.id) { <p>#{{v.id}} · {{v.clienteNombre}} · {{v.estado}} · {{v.total | currency:'PEN':'S/ '}}</p> } }
+</section>

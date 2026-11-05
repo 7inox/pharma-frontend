@@ -1,0 +1,20 @@
+<p class="eyebrow">PANEL PRINCIPAL</p>
+<h1>Bienvenido a PharmaSoft</h1>
+<p class="subtitulo">Administra el catálogo de tu botica desde un solo lugar.</p>
+<section class="card inicio-card">
+<span class="modulo-icono" aria-hidden="true">▦</span>
+<h2>Categorías</h2>
+<p>Consulta, registra y organiza las categorías de productos.</p>
+<a class="btn primario" routerLink="/categorias">Administrar categorías →</a>
+</section>
+@if (auth.has('REPORTES_VER')) {
+  @defer (on viewport) {
+    <app-mas-vendidos />
+  } @placeholder {
+    <p class="card">Productos más vendidos</p>
+  } @loading (minimum 300ms) {
+    <p class="card">Cargando reporte…</p>
+  } @error {
+    <p class="card" role="alert">No se pudo cargar el módulo del reporte.</p>
+  }
+}
