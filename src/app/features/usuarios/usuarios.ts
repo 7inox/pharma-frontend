@@ -1,3 +1,4 @@
+import { mensajeError } from '../../core/utils/http-error';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { forkJoin } from 'rxjs';
@@ -41,7 +42,7 @@ export class Usuarios implements OnInit {
       next:({users,roles})=>{this.users.set(users);this.roles.set(roles);
         this.chosen.set(Object.fromEntries(users.map(u=>[u.id,roles.filter(r=>u.roles.includes(r.nombre)).map(r=>r.id)])));
         this.loading.set(false);},
-      error:e=>{this.loading.set(false);this.error.set(e.error?.message??'No se pudieron cargar los usuarios');}
+      error:e=>{this.loading.set(false);this.error.set(mensajeError(e, 'No se pudieron cargar los usuarios'));}
     });
   }
   selected(id:number,role:number){return this.chosen()[id]?.includes(role)??false;}
@@ -58,7 +59,7 @@ export class Usuarios implements OnInit {
       next:updated=>{this.users.update(all=>all.map(u=>u.id===updated.id?updated:u));this.busy.set(false);
         this.message.set(`Roles de ${updated.username} actualizados.`);
         if(updated.username===this.auth.session()?.username) this.auth.logout();},
-      error:e=>{this.busy.set(false);this.error.set(e.error?.message??'No se pudieron guardar los roles');}
+      error:e=>{this.busy.set(false);this.error.set(mensajeError(e, 'No se pudieron guardar los roles'));}
     });
   }
   changeState(user:Usuario){
@@ -66,7 +67,7 @@ export class Usuarios implements OnInit {
     this.http.patch<Usuario>(`${this.url}/${user.id}/estado`,{estado:!user.estado}).subscribe({
       next:updated=>{this.users.update(all=>all.map(u=>u.id===updated.id?updated:u));this.busy.set(false);
         this.message.set(`${updated.username}: ${updated.estado?'activo':'inactivo'}.`);},
-      error:e=>{this.busy.set(false);this.error.set(e.error?.message??'No se pudo cambiar el estado');}
+      error:e=>{this.busy.set(false);this.error.set(mensajeError(e, 'No se pudo cambiar el estado'));}
     });
   }
 }

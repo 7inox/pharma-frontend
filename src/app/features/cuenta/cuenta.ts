@@ -1,3 +1,4 @@
+import { mensajeError } from '../../core/utils/http-error';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -29,7 +30,7 @@ export class Cuenta {
     this.error.set('');this.busy.set(true);
     this.http.put<void>(`${environment.apiUrl}/auth/password`,{passwordActual:this.current,passwordNueva:this.next}).subscribe({
       next:()=>{this.current='';this.next='';this.auth.logout();},
-      error:e=>{this.busy.set(false);this.error.set(e.error?.message??'No se pudo cambiar la contraseña');}
+      error:e=>{this.busy.set(false);this.error.set(mensajeError(e, 'No se pudo cambiar la contraseña'));}
     });
   }
 }

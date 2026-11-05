@@ -1,3 +1,4 @@
+import { mensajeError } from '../../../../core/utils/http-error';
 import { Component, inject, input, signal, OnInit, computed } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -13,6 +14,6 @@ export class VentaDetalle implements OnInit {
   readonly venta=signal<Venta|null>(null);readonly cliente=signal<Cliente|null>(null);readonly error=signal('');readonly fechaImpresion=new Date();
   readonly numero=computed(()=>String(this.venta()?.id??'').padStart(6,'0'));
   readonly unidades=computed(()=>(this.venta()?.detalles??[]).reduce((s,d)=>s+d.cantidad,0));
-  ngOnInit(){this.servicio.obtener(Number(this.id())).pipe(switchMap(venta=>this.clientes.obtener(venta.clienteId).pipe(catchError(()=>of(null)),map(cliente=>({venta,cliente}))))).subscribe({next:r=>{this.venta.set(r.venta);this.cliente.set(r.cliente);if(this.imprimir())requestAnimationFrame(()=>requestAnimationFrame(()=>window.print()));},error:e=>this.error.set(e.error?.message??'No se pudo obtener la venta')});}
+  ngOnInit(){this.servicio.obtener(Number(this.id())).pipe(switchMap(venta=>this.clientes.obtener(venta.clienteId).pipe(catchError(()=>of(null)),map(cliente=>({venta,cliente}))))).subscribe({next:r=>{this.venta.set(r.venta);this.cliente.set(r.cliente);if(this.imprimir())requestAnimationFrame(()=>requestAnimationFrame(()=>window.print()));},error:e=>this.error.set(mensajeError(e, 'No se pudo obtener la venta'))});}
   imprimirComprobante(){window.print();}
 }

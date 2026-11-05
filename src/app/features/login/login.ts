@@ -62,7 +62,7 @@ export class Login {
       next: () => void this.router.navigateByUrl(this.destination()),
       error: (err: HttpErrorResponse) => {
         this.form.controls.password.reset();
-        this.error.set(err.status === 401 ? 'Usuario o contraseña incorrectos' : mensajeError(err));
+        this.error.set(mensajeError(err, err.status === 401 ? 'Usuario o contraseña incorrectos' : undefined));
       }
     });
   }
