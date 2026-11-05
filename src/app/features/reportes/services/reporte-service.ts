@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-import { VentaPorCategoria } from '../models/reporte.model';
+import { ProductoMasVendido, VentaPorCategoria } from '../models/reporte.model';
 import { map } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -14,5 +14,9 @@ export class ReporteService {
     return this.http.get<(VentaPorCategoria & { unidadesVendidas?: number })[]>(`${environment.apiUrl}/reportes/ventas-por-categoria`, { params }).pipe(
       map(filas => filas.map(fila => ({ ...fila, cantidadVendida: fila.cantidadVendida ?? fila.unidadesVendidas ?? 0 })))
     );
+  }
+
+  productosMasVendidos() {
+    return this.http.get<ProductoMasVendido[]>(`${environment.apiUrl}/reportes/productos-mas-vendidos`);
   }
 }

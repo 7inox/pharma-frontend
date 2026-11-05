@@ -1,0 +1,27 @@
+<section class="card">
+  <h2>Productos más vendidos</h2>
+  @let datos = filas();
+  @if (datos === undefined) {
+    <p role="status">Consultando ventas…</p>
+  } @else if (datos === null) {
+    <p role="alert">No se pudo consultar el reporte.</p>
+  } @else {
+    <table class="tabla">
+      <thead>
+        <tr><th>Producto</th><th>Categoría</th><th>Cantidad</th><th>Monto</th></tr>
+      </thead>
+      <tbody>
+        @for (fila of datos; track fila.productoId) {
+          <tr>
+            <td>{{ fila.productoNombre }}</td>
+            <td>{{ fila.categoriaNombre }}</td>
+            <td>{{ fila.cantidadVendida }}</td>
+            <td>{{ fila.montoTotal | currency:'PEN':'S/ ' }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="4">Aún no hay ventas registradas.</td></tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>
