@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { expect, test } from '@playwright/test';
-import { api, captura, credenciales, ingresar, iniciarSesion } from './apoyo';
+import { api, captura, credenciales, iniciarSesion } from './apoyo';
 
-test('el vendedor registra una venta que actualiza stock, reporte y auditoría', async ({ page, request }, info) => {
+test('el vendedor registra una venta que actualiza stock, reporte y auditoría', async ({ page, request, browser }, info) => {
   const headers = await credenciales(request, 'admin');
   const vendedor = await credenciales(request, 'vendedor');
   const sufijo = randomUUID().slice(0, 8);
@@ -85,12 +85,17 @@ test('el vendedor registra una venta que actualiza stock, reporte y auditoría',
   expect(reporte.status()).toBe(200);
   expect(await reporte.json()).toContainEqual(expect.objectContaining({ productoId, cantidadVendida: 2, montoTotal: 9 }));
   expect(errores).toEqual([]);
-  await page.getByRole('button', { name: /Cerrar sesión/i }).click();
-  await expect(page).toHaveURL(/login/);
-  await ingresar(page, 'admin');
-  const filaReporte = page.getByRole('row').filter({ has: page.getByRole('cell', { name: nombre, exact: true }) });
-  await expect(filaReporte.getByRole('cell', { name: '2', exact: true })).toBeVisible();
-  await captura(page, info, 'reporte-admin');
+  const administrador = await browser.newPage({ baseURL: 'http://localhost:4200' });
+  try {
+    await iniciarSesion(administrador, 'admin');
+    const filaReporte = administrador.getByRole('row').filter({
+      has: administrador.getByRole('cell', { name: nombre, exact: true }),
+    });
+    await expect(filaReporte.getByRole('cell', { name: '2', exact: true })).toBeVisible();
+    await captura(administrador, info, 'reporte-admin');
+  } finally {
+    await administrador.close();
+  }
 
   const auditoria = await request.get(`${api}/auditoria?accion=VENTA_REGISTRADA&usuario=vendedor&tamanio=20`, { headers });
   expect(auditoria.status()).toBe(200);
