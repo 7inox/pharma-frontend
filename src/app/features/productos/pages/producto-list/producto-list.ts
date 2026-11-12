@@ -1,3 +1,5 @@
+import { HttpErrorResponse } from '@angular/common/http';
+import { PaginaResponse } from '../../../../core/models/pagina-response';
 import { Component, DestroyRef, computed, effect, inject, input, linkedSignal, signal } from '@angular/core';
 import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CurrencyPipe } from '@angular/common';
@@ -40,14 +42,15 @@ export class ProductoList {
     }),
     stream: ({ params: p }) => this.service.listar(p.pagina, p.tamanio, p.orden, p.dir, p.categoriaId),
   });
-  protected readonly resultado = linkedSignal({
+  protected readonly resultado = linkedSignal<PaginaResponse<Producto> | undefined, PaginaResponse<Producto> | undefined>({
     source: () => this.consulta.hasValue() ? this.consulta.value() : undefined,
     computation: (valor, anterior) => valor ?? anterior?.value,
   });
   protected readonly cargando = this.consulta.isLoading;
   protected readonly error = computed(() => {
     const error = this.consulta.error();
-    return error ? mensajeError(error) : this.errorBaja();
+    if (!error) return this.errorBaja();
+    return error instanceof HttpErrorResponse ? mensajeError(error) : error.message;
   });
   protected readonly categorias = signal<Categoria[]>([]);
   protected readonly errorCategorias = signal('');

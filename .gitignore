@@ -48,3 +48,6 @@ Thumbs.db
 /backend/classpath.txt
 /backend/compile-debug.log
 /backend/run.log
+
+/playwright-report/
+/test-results/

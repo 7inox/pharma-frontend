@@ -1,3 +1,5 @@
+import { HttpErrorResponse } from '@angular/common/http';
+import { PaginaResponse } from '../../../../core/models/pagina-response';
 import { mensajeError } from '../../../../core/utils/http-error';
 import { Component, computed, effect, inject, input, linkedSignal, signal } from '@angular/core';
 import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -6,7 +8,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
 import { VentaService } from '../../services/venta-service';
 import { Cliente } from '../../../clientes/models/cliente.model';
-import { EstadoVenta, FiltroVentas, OrdenVenta } from '../../models/venta.model';
+import { EstadoVenta, FiltroVentas, OrdenVenta, Venta } from '../../models/venta.model';
 import { SiPermiso } from '../../../../shared/directives/si-permiso';
 import { Paginador } from '../../../../shared/components/paginador/paginador';
 import { enteroEnRango } from '../../../../core/utils/paginacion';
@@ -56,14 +58,14 @@ export class VentaList {
     }),
     stream: ({ params: p }) => this.servicio.buscar(p.filtros, p.pagina, p.tamanio, p.orden, p.dir),
   });
-  readonly pagina = linkedSignal({
+  readonly pagina = linkedSignal<PaginaResponse<Venta> | undefined, PaginaResponse<Venta> | undefined>({
     source: () => this.consulta.hasValue() ? this.consulta.value() : undefined,
     computation: (valor, anterior) => valor ?? anterior?.value,
   });
   readonly cargando = this.consulta.isLoading;
   readonly error = computed(() => {
     const error = this.consulta.error();
-    return this.errorFiltro() || (error ? mensajeError(error, 'No se pudo consultar ventas') : '');
+    return this.errorFiltro() || (error instanceof HttpErrorResponse ? mensajeError(error, 'No se pudo consultar ventas') : error?.message || '');
   });
   readonly totalPagina = computed(() => (this.pagina()?.contenido ?? [])
     .filter(v => v.estado === 'REGISTRADA')
