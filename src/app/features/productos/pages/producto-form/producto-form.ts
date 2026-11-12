@@ -22,6 +22,7 @@ export class ProductoForm {
   protected readonly error = signal('');
   protected readonly errores = signal<Record<string, string>>({});
   protected readonly categorias = signal<Categoria[]>([]);
+  protected readonly modificadoPor = signal<string | null>(null);
   protected readonly categoriaOriginal = signal<number | null>(null);
   protected readonly form = inject(FormBuilder).group({
     nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(150)]],
@@ -44,6 +45,7 @@ export class ProductoForm {
       const sub = forkJoin({ categorias: this.categoriaService.listar(), producto: id === null ? of(null) : this.service.obtener(id) }).subscribe({
         next: ({ categorias, producto }) => {
           this.categorias.set(categorias);
+          this.modificadoPor.set(producto?.modificadoPor ?? null);
           if (producto) { this.categoriaOriginal.set(producto.categoriaId); this.form.reset({ nombre: producto.nombre, precio: producto.precio, stock: producto.stock, estado: producto.estado, categoriaId: producto.categoriaId }); }
           this.disponible.set(true); this.cargando.set(false);
         },

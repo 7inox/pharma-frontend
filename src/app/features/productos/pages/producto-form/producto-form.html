@@ -2,6 +2,7 @@
 @if (error()) { <div class="alerta" role="alert">{{ error() }}</div> }
 @if (cargando()) { <section class="card" role="status">Cargando producto y categorías…</section> }
 @else if (disponible()) {
+  @if (modificadoPor(); as usuario) { <p class="ayuda">Modificado por {{ usuario }}</p> }
   @if (!hayCategoriasActivas()) { <div class="alerta" role="alert">No hay categorías activas. <a routerLink="/categorias/nuevo">Crear una categoría</a> antes de guardar.</div> }
   @if (categoriaInactiva()) { <div class="alerta" role="alert">La categoría original está inactiva. Elige una categoría activa para guardar.</div> }
   <form class="card form-card" [formGroup]="form" (ngSubmit)="guardar()" novalidate>

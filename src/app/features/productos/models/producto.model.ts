@@ -7,6 +7,8 @@ export interface ProductoRequest {
 }
 export interface Producto extends ProductoRequest {
   id: number;
+  creadoPor?: string | null;
+  modificadoPor?: string | null;
   categoriaNombre: string;
   fechaCreacion: string;
   fechaModificacion: string | null;

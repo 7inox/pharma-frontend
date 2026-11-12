@@ -1,3 +1,4 @@
+export type OrdenVenta = 'fecha' | 'total' | 'estado' | 'clienteId';
 export type EstadoVenta = 'REGISTRADA' | 'ANULADA';
 export interface DetalleVenta { productoId:number; productoNombre:string; cantidad:number; precio:number; subtotal:number; }
 export interface Venta { id:number; fecha:string; clienteId:number; clienteNombre:string; estado:EstadoVenta; total:number; detalles:DetalleVenta[]; }
