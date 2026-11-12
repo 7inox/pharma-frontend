@@ -6,7 +6,8 @@ import { finalize } from 'rxjs';
 import { CategoriaService } from '../../services/categoria-service';
 import { Categoria } from '../../models/categoria.model';
 import { mensajeError } from '../../../../core/utils/http-error';
-@Component({ selector: 'app-categoria-list', imports: [RouterLink, DatePipe], templateUrl: './categoria-list.html' })
+import { SiPermiso } from '../../../../shared/directives/si-permiso';
+@Component({ selector: 'app-categoria-list', imports: [RouterLink, DatePipe, SiPermiso], templateUrl: './categoria-list.html' })
 export class CategoriaList implements OnInit {
     private readonly service = inject(CategoriaService);
     private readonly router = inject(Router);

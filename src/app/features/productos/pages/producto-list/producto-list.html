@@ -1,0 +1,16 @@
+<div class="page-head"><div><p class="eyebrow">PHARMASOFT · CATÁLOGO</p><h1>Productos</h1><p class="subtitulo">Productos relacionados con su categoría.</p></div><a *appSiPermiso="'CATALOGO_ESCRIBIR'" routerLink="nuevo" class="btn primario">+ Nuevo producto</a></div>
+@if (mensaje()) { <div class="alerta exito" role="status">{{ mensaje() }}</div> }
+@if (error()) { <div class="alerta" role="alert">{{ error() }} <button class="btn pequeno" (click)="cargar()">Reintentar</button></div> }
+@if (errorCategorias()) { <div class="alerta" role="alert">No se pudo cargar el filtro: {{ errorCategorias() }}</div> }
+<section class="card">
+  <div class="toolbar"><label>Categoría <select aria-label="Filtrar por categoría" [value]="categoriaId() ?? ''" (change)="filtrar($any($event.target).value)"><option value="" [selected]="categoriaId() === null">Todas</option>@for (c of categorias(); track c.id) { <option [value]="c.id" [selected]="c.id === categoriaId()">{{ c.nombre }}{{ c.estado ? '' : ' (inactiva)' }}</option> }</select></label></div>
+  @if (cargando()) { <p class="estado-vacio" role="status">Cargando productos…</p> }
+  @if (resultado(); as p) {
+    <div class="tabla-scroll"><table data-testid="tabla-productos"><thead><tr><th><button class="orden" (click)="ordenar('nombre')">Nombre {{ orden() === 'nombre' ? (dir() === 'asc' ? '↑' : '↓') : '' }}</button></th><th>Categoría</th><th><button class="orden" (click)="ordenar('precio')">Precio {{ orden() === 'precio' ? (dir() === 'asc' ? '↑' : '↓') : '' }}</button></th><th><button class="orden" (click)="ordenar('stock')">Stock {{ orden() === 'stock' ? (dir() === 'asc' ? '↑' : '↓') : '' }}</button></th><th>Estado</th><th *appSiPermiso="'CATALOGO_ESCRIBIR'">Acciones</th></tr></thead><tbody>
+    @for (p of p.contenido; track p.id) { <tr><td>{{ p.nombre }}</td><td>{{ p.categoriaNombre }}</td><td>{{ p.precio | currency:'PEN':'S/ ':'1.2-2' }}</td><td data-testid="stock-producto">{{ p.stock }}</td><td><span class="estado" [class.activo]="p.estado">{{ p.estado ? 'Activo' : 'Inactivo' }}</span></td><td *appSiPermiso="'CATALOGO_ESCRIBIR'"><div class="acciones"><a class="btn pequeno" [routerLink]="[p.id, 'editar']">Editar</a><button class="btn pequeno peligro" [disabled]="!p.estado" (click)="confirmar.set(p)">Dar de baja</button></div></td></tr> }
+    @empty { <tr><td colspan="6" class="estado-vacio">No hay productos para el filtro seleccionado.</td></tr> }
+    </tbody></table></div>
+    <app-paginador [datos]="p" [ocupado]="cargando()" (cambioPagina)="ir($event)" (cambioTamanio)="cambiarTamanio($event)" />
+  }
+</section>
+@if (confirmar(); as p) { <div class="dialog-backdrop"><section class="card dialog" role="dialog" aria-modal="true" aria-labelledby="titulo-baja"><h2 id="titulo-baja">Dar de baja</h2><p>¿Dar de baja a {{ p.nombre }}? El producto se conservará como inactivo.</p><div class="acciones"><button class="btn" [disabled]="eliminando()" (click)="confirmar.set(null)">Cancelar</button><button class="btn peligro" [disabled]="eliminando()" (click)="baja()">{{ eliminando() ? 'Procesando…' : 'Confirmar baja' }}</button></div></section></div> }

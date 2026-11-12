@@ -1,0 +1,14 @@
+@let p = datos();
+<nav aria-label="Paginación">
+  <span class="rango" data-testid="resumen-paginacion">{{ desde() }}–{{ hasta() }} de {{ p.totalElementos }}</span>
+  <label>Filas
+    <select [disabled]="ocupado()" (change)="cambioTamanio.emit(+$any($event.target).value)">
+      @for (t of tamanios(); track t) { <option [value]="t" [selected]="t === p.tamanio">{{ t }}</option> }
+    </select>
+  </label>
+  <button type="button" class="btn pequeno" aria-label="Primera página" (click)="ir(0)" [disabled]="p.pagina === 0 || ocupado()">«</button>
+  <button type="button" class="btn pequeno" (click)="ir(p.pagina - 1)" [disabled]="p.pagina === 0 || ocupado()">Anterior</button>
+  <span data-testid="pagina-actual">Página {{ p.totalPaginas ? p.pagina + 1 : 1 }} de {{ p.totalPaginas || 1 }}</span>
+  <button type="button" class="btn pequeno" (click)="ir(p.pagina + 1)" [disabled]="p.ultima || ocupado()">Siguiente</button>
+  <button type="button" class="btn pequeno" aria-label="Última página" (click)="ir(p.totalPaginas - 1)" [disabled]="p.ultima || ocupado()">»</button>
+</nav>

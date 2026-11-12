@@ -1,6 +1,12 @@
-import { Component, output } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-@Component({ selector: 'app-header', imports: [RouterLink], templateUrl: './header.html', styleUrl: './header.css' })
+import { AuthService } from '../../core/auth/auth.service';
+import { environment } from '../../../environments/environment';
+
+@Component({ selector: 'app-header', imports: [RouterLink, DatePipe], templateUrl: './header.html', styleUrl: './header.css' })
 export class Header {
+    protected readonly production = environment.production;
+    protected readonly auth = inject(AuthService);
     readonly toggleMenu = output<void>();
 }

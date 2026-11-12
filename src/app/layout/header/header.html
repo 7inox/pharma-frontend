@@ -1,1 +1,16 @@
-<header class="header"><button type="button" class="btn-menu" aria-label="Mostrar u ocultar menú" (click)="toggleMenu.emit()">☰</button><a routerLink="/inicio" class="marca">Pharma<span>Soft</span></a><nav aria-label="Menú superior"><a routerLink="/inicio">Inicio</a><a href="http://localhost:8080/swagger-ui.html" target="_blank" rel="noopener">API · Swagger ↗</a></nav><span class="usuario">Miguel Tinoco · LP II</span></header>
+<header class="header">
+  <button type="button" class="btn-menu" aria-label="Mostrar u ocultar menú" (click)="toggleMenu.emit()">☰</button>
+  <a routerLink="/inicio" class="marca">Pharma<span>Soft</span></a>
+  <nav aria-label="Menú superior">
+    <a routerLink="/inicio">Inicio</a>
+    @if (!production) {
+      <a href="http://localhost:8081/swagger-ui.html" target="_blank" rel="noopener">API · Swagger ↗</a>
+    }
+  </nav>
+  @if (auth.session(); as session) {
+    <div class="usuario"><span class="nombre">{{ session.nombreCompleto }}</span>
+      <span class="detalle">{{ session.roles.join(' · ') }} · expira {{ session.expiraEn | date:'HH:mm' }}</span>
+    </div>
+    <button type="button" class="salir" (click)="auth.logout()">Cerrar sesión</button>
+  }
+</header>
