@@ -8,8 +8,9 @@ import { Direccion, OrdenProducto, Producto, ProductoRequest } from '../models/p
 export class ProductoService {
   private readonly http = inject(HttpClient);
   private readonly url = environment.apiUrl + '/productos';
-  listar(pagina = 0, tamanio = 10, ordenarPor: OrdenProducto = 'nombre', direccion: Direccion = 'asc') {
-    const params = new HttpParams().set('pagina', pagina).set('tamanio', tamanio).set('ordenarPor', ordenarPor).set('direccion', direccion);
+  listar(pagina = 0, tamanio = 10, ordenarPor: OrdenProducto = 'nombre', direccion: Direccion = 'asc', categoriaId: number | null = null) {
+    let params = new HttpParams().set('pagina', pagina).set('tamanio', tamanio).set('ordenarPor', ordenarPor).set('direccion', direccion);
+    if (categoriaId !== null) params = params.set('categoriaId', categoriaId);
     return this.http.get<PaginaResponse<Producto>>(this.url, { params });
   }
   obtener(id: number) { return this.http.get<Producto>(`${this.url}/${id}`); }
