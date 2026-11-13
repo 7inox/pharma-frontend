@@ -4,12 +4,12 @@
 <section class="card">
   <form [formGroup]="form" (ngSubmit)="buscar()">
     <label>Usuario <input formControlName="usuario" maxlength="50" placeholder="vendedor"></label>
-    <label>Acción
-      <select formControlName="accion">
+    <div class="filtro-accion"><label for="auditoria-accion">Acción</label>
+      <select id="auditoria-accion" formControlName="accion">
         <option value="">Todas</option>
         @for (accion of acciones; track accion) { <option [value]="accion">{{ accion }}</option> }
       </select>
-    </label>
+    </div>
     <label>Desde <input type="date" formControlName="desde"></label>
     <label>Hasta <input type="date" formControlName="hasta"></label>
     <button type="submit" class="btn primario">Aplicar filtros</button>
