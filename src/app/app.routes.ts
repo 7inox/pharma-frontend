@@ -15,6 +15,7 @@ export const routes: Routes = [
       { path: 'reportes', canActivate: [permissionGuard], data: {permission: 'REPORTES_VER'}, loadChildren: () => import('./features/reportes/reportes.routes').then(m => m.REPORTES_ROUTES) },
       { path: 'categorias', canActivate: [permissionGuard], data: {permission: 'CATALOGO_LEER'}, loadChildren: () => import('./features/categorias/categorias.routes').then(m => m.CATEGORIAS_ROUTES) },
       { path: 'usuarios', canActivate: [permissionGuard], data: {permission: 'USUARIOS_ADMINISTRAR'}, loadComponent: () => import('./features/usuarios/usuarios').then(m => m.Usuarios) },
+      { path: 'auditoria', canActivate: [permissionGuard], data: { permission: 'USUARIOS_ADMINISTRAR' }, loadComponent: () => import('./features/auditoria/auditoria').then(m => m.Auditoria) },
       { path: 'cuenta', loadComponent: () => import('./features/cuenta/cuenta').then(m => m.Cuenta) }
     ]
   },
